@@ -5,7 +5,7 @@ from discord.ext import commands
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-from check_engine import generate_health_reply  # ← 既存 check_engine.py を利用
+from engine.check_engine import generate_health_reply  # ← 既存 check_engine.py を利用
 
 # ---------------------------------------------------------
 # Firebase 接続（Render / ローカル両対応）
