@@ -104,15 +104,16 @@ TONE_STYLES = {
 # ================================================================
 # AI補足生成
 # ================================================================
-def generate_ai_supplement(tone_id, category, answer_text):
-    """トーン別AI補足文を生成する（1〜2文）"""
+from openai import OpenAI
 
+client = OpenAI()
+
+def generate_ai_supplement(tone_id, category, answer_text):
     if category is None:
         return None
 
     style = TONE_STYLES.get(tone_id, TONE_STYLES["gentle_female"])
 
-    # カテゴリ別の説明
     if category == "neutral":
         category_inst = "ユーザーは少し曖昧な答え方をしています。安心感を与える短い励ましをください。"
     elif category == "uncertain":
@@ -146,7 +147,7 @@ def generate_ai_supplement(tone_id, category, answer_text):
 """
 
     try:
-        resp = openai.ChatCompletion.create(
+        resp = client.chat.completions.create(
             model=OPENAI_MODEL,
             messages=[
                 {"role": "system", "content": system_prompt},
@@ -155,9 +156,11 @@ def generate_ai_supplement(tone_id, category, answer_text):
             max_tokens=120,
             temperature=0.7,
         )
-        return resp["choices"][0]["message"]["content"].strip()
 
-    except Exception:
+        return resp.choices[0].message["content"].strip()
+
+    except Exception as e:
+        print("AI補足生成エラー:", e)
         return None
 
 # ================================================================
